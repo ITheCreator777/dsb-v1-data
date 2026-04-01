@@ -185,17 +185,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 // E=4 Комментарий, F=5 Текущий статус, G=6 План/Дорожная карта, H=7 Ссылки
 // Риск и Приоритет добавили в Excel — если их нет в Sheets, берём из статуса
 const COL = {
-  category : 0,
-  name     : 1,
-  pm       : 2,
-  contacts : 3,
-  comment  : 4,
-  status   : 5,
-  plan     : 6,
-  links    : 7,
-  risk     : 8,   // колонка I — если добавишь в Google Sheets
-  priority : 9,   // колонка J — если добавишь в Google Sheets
-  deadline : 10,  // колонка K — если добавишь в Google Sheets
+  category : 1,  // Столбец B
+  name     : 2,  // Столбец C (Проект / Система)
+  pm       : 3,  // Столбец D (Ответственный ПМ)
+  contacts : 4,  // Столбец E
+  status   : 5,  // Столбец F (Текущий статус)
+  risk     : 6,  // Столбец G
+  priority : 7,  // Столбец H
+  deadline : 8,  // Столбец I
+  plan     : 9,  // Столбец J (План / Дорожная карта)
+  comment  : 10, // Столбец K (Комментарий / Описание)
+  links    : 11, // Столбец L
 };
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTs2-6b2qurW0YPwyyQ5gPFuQ5uDHnwtieEPBS83tL-Eh71m3yhMpEzwNdSJ1VEF89OvzJdr6rVkcow/pub?gid=1469857250&single=true&output=csv';
@@ -328,18 +328,26 @@ function render(projects) {
     </div>`;
   }).join('');
 
-  // PM load
+// PM load (Считаем количество проектов на каждого ПМ)
   const pmCounts = {};
-  projects.forEach(p => { pmCounts[p.pm] = (pmCounts[p.pm]||0)+1; });
-  const pmSorted = Object.entries(pmCounts).sort((a,b)=>b[1]-a[1]);
-  const maxPm = pmSorted[0]?.[1] || 1;
-  document.getElementById('pmList').innerHTML = pmSorted.map(([pm,cnt],i) =>
-    `<div class="pm-row">
-      <span class="pm-name">${pm}</span>
-      <div class="pm-bar-wrap"><div class="pm-bar" style="width:${Math.round(cnt/maxPm*100)}%;background:${PM_COLORS[i%PM_COLORS.length]}"></div></div>
-      <span class="pm-cnt">${cnt}</span>
-    </div>`
-  ).join('');
+  projects.forEach(p => { 
+    const name = p.pm || 'Не указан';
+    pmCounts[name] = (pmCounts[name] || 0) + 1; 
+  });
+
+  // Сортируем: у кого больше всего проектов — тот сверху
+  const pmSorted = Object.entries(pmCounts).sort((a, b) => b[1] - a[1]);
+  const maxProjects = pmSorted[0]?.[1] || 1;
+
+  document.getElementById('pmList').innerHTML = pmSorted.map(([name, count], i) => `
+    <div class="pm-row">
+      <span class="pm-name">${name}</span>
+      <div class="pm-bar-wrap">
+        <div class="pm-bar" style="width: ${Math.round((count / maxProjects) * 100)}%; background: ${PM_COLORS[i % PM_COLORS.length]}"></div>
+      </div>
+      <span class="pm-cnt">${count}</span>
+    </div>
+  `).join('');
 
   // Charts
   buildLegend('legendStatus', statusCounts, STATUS_COLOR);
