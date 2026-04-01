@@ -185,17 +185,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 // E=4 Комментарий, F=5 Текущий статус, G=6 План/Дорожная карта, H=7 Ссылки
 // Риск и Приоритет добавили в Excel — если их нет в Sheets, берём из статуса
 const COL = {
-  category : 0,
-  name     : 1,
-  pm       : 2,
-  contacts : 3,
-  comment  : 4,
-  status   : 5,
-  plan     : 6,
-  links    : 7,
-  risk     : 8,   // колонка I — если добавишь в Google Sheets
-  priority : 9,   // колонка J — если добавишь в Google Sheets
-  deadline : 10,  // колонка K — если добавишь в Google Sheets
+  name     : 0,   // Колонка A
+  pm       : 1,   // Колонка B (теперь ПМ будет браться правильно)
+  contacts : 2,   // Колонка C
+  comment  : 3,   // Колонка D
+  status   : 4,   // Колонка E
+  plan     : 5,   // Колонка F
+  links    : 6,   // Колонка G
+  category : 99,  // Этой колонки нет, ставим любое число (код не упадет)
+  risk     : 7,   // Если есть скрытые колонки дальше, проверь индексы
+  priority : 8,
+  deadline : 9,
 };
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTs2-6b2qurW0YPwyyQ5gPFuQ5uDHnwtieEPBS83tL-Eh71m3yhMpEzwNdSJ1VEF89OvzJdr6rVkcow/pub?gid=1469857250&single=true&output=csv';
