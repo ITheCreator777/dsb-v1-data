@@ -405,7 +405,17 @@ async function loadData() {
     const rows = parseCSV(text);
 
     // Пропускаем заголовок (строка 1)
-    const dataRows = rows.slice(1).filter(r => r[COL.name] && r[COL.name].trim());
+    // Пропускаем первую строку и ВСЕ строки, где вместо имени проекта написано "Проект / Система" или "Ответственный"
+    const dataRows = rows.slice(1).filter(r => {
+      const name = (r[COL.name] || '').trim();
+      const pm = (r[COL.pm] || '').trim();
+      
+      // Условие: пропускаем строку, если она пустая ИЛИ если это технический заголовок
+      return name && 
+             name !== "Проект / Система" && 
+             pm !== "Ответственный" && 
+             name !== "";
+    });
 
     const projects = dataRows.map(r => ({
       category : (r[COL.category]||'').trim(),
